@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+</head>
+<body>
+  <h1>🔒 Admin - Aggiorna Ranking</h1>
+  <form id="updateForm">
+    <textarea id="rankingData" rows="10" cols="50"></textarea><br>
+    Password: <input type="password" id="password" /><br>
+    <button type="submit">Aggiorna</button>
+  </form>
+  <script>
+    fetch('http://localhost:3000/api/rankings')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('rankingData').value = JSON.stringify(data, null, 2);
+      });
+
+    document.getElementById('updateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const updates = JSON.parse(document.getElementById('rankingData').value);
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('http://localhost:3000/api/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, updates })
+      });
+
+      if (res.ok) alert("Aggiornato con successo!");
+      else alert("Errore di autorizzazione");
+    });
+  </script>
+</body>
+</html>
